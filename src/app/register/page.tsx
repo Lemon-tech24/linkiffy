@@ -1,10 +1,13 @@
-import Button from "./components/Button";
+import React from "react";
 import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import Button from "../components/Button";
 
-export default function Home() {
+const page = () => {
+  const inputStyles =
+    "text-xl w-full border border-black border-solid px-2 rounded-md";
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-r from-red-600 via-[#F266AB] to-green-400">
       <div className="w-1/4 m-auto rounded-lg shadow-2xl p-4 bg-white">
         {/* {-----------------------------------------------} */}
         <h1 className="text-3xl font-semibold text-center mb-4">Linkiffy</h1>
@@ -17,7 +20,7 @@ export default function Home() {
             <span className="text-[#4267B2] text-2xl">
               <FaFacebook />
             </span>
-            Login With Facebook
+            Register With Facebook
           </button>
           <button
             type="button"
@@ -26,7 +29,7 @@ export default function Home() {
             <span className="text-[#4267B2] text-2xl">
               <FcGoogle />
             </span>
-            Login With Google
+            Register With Google
           </button>
         </div>
 
@@ -36,14 +39,24 @@ export default function Home() {
         <form className="w-full flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <input
-              type="text"
+              type="email"
               placeholder="Email"
-              className="text-xl w-full border border-black border-solid px-2 rounded-md"
+              className={inputStyles}
+              required
             />
+
             <input
-              type="text"
+              type="password"
               placeholder="Password"
-              className="text-xl w-full border border-black border-solid px-2 rounded-md"
+              className={inputStyles}
+              required
+            />
+
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className={inputStyles}
+              required
             />
           </div>
           <Button
@@ -54,11 +67,13 @@ export default function Home() {
         </form>
 
         <div className="w-full flex items-center justify-center mt-2">
-          <a href="/register" className="underline text-blue-600">
-            Rigester
+          <a href="/" className="underline text-blue-600">
+            Login
           </a>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default page;
