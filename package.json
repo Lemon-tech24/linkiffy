@@ -11,16 +11,25 @@
   "dependencies": {
     "@splinetool/react-spline": "^4.0.0",
     "@splinetool/runtime": "^1.9.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "axios": "^1.7.7",
+    "fs": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.2.7",
     "next-auth": "^5.0.0-beta.20",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@prisma/client": "^5.19.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "postcss": "^8",

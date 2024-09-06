@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 import React from "react";
@@ -20,6 +20,7 @@ const page = async () => {
   if (!session) {
     return redirect("/");
   }
+
   return (
     <div className="h-[94%] w-full">
       <Navigation session={session} />

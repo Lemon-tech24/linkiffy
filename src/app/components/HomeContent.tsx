@@ -1,5 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from "react";
 import Navigation from "./Navigation";
 import LoginCreate from "./LoginCreate";
@@ -16,10 +17,10 @@ const HomeContent = () => {
 
   useEffect(() => {
     if (search === "OAuthCallbackError") {
-      console.log("canceled");
       router.replace("/");
     }
   }, [search]);
+
   return (
     <>
       <Navigation />
