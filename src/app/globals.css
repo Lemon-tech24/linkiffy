@@ -6,14 +6,12 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-  font-family: var(--font-pop);
   outline: none;
-}
-
-* {
-  @apply transition-colors;
+  border: none;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
 }
 
 ** {
-  box-sizing: border-box;
+  box-sizing: inherit;
 }

@@ -1,3 +1,4 @@
+"use client";
 import SplineNext from "@splinetool/react-spline";
 import { useState } from "react";
 

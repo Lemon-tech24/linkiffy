@@ -1,17 +1,9 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-
-const inter = Poppins({
-  subsets: ["latin-ext"],
-  weight: ["300"],
-  variable: "--font-pop",
-});
 
 export const metadata: Metadata = {
   title: "Linkiffy | An Online Bio Tool",
-  description: "An Online Bio Tool",
-  icons: "./link_1.png",
+  description: "Linkiffy is an Online Bio Tool",
 };
 
 export default function RootLayout({
@@ -21,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

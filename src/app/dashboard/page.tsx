@@ -1,32 +1,38 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+import React, { useEffect } from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 
-import React from "react";
-import LogoutButton from "../components/LogoutButton";
+import { useRouter } from "next/navigation";
+import { createUser } from "../lib/action";
+import DashboardNav from "../components/DashboardNav";
 
-const Navigation = ({ session }: any) => {
-  return (
-    <div className="h-[6%] w-full flex items-center justify-between px-4">
-      <div>{session.user.email}</div>
-
-      <LogoutButton />
-    </div>
-  );
+const Content = () => {
+  return <div className="w-full h-[94%]"></div>;
 };
 
-const page = async () => {
-  const session = await auth();
+function Page() {
+  const { isAuthenticated, isLoading } = useKindeBrowserClient();
+  const router = useRouter();
 
-  if (!session) {
-    return redirect("/");
-  }
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/");
+    } else if (isAuthenticated) {
+      createUser().then((data) => {
+        console.log(data?.msg);
+      });
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   return (
-    <div className="h-[94%] w-full">
-      <Navigation session={session} />
-      <pre>{JSON.stringify(session, null, 2)}</pre>
-    </div>
+    isAuthenticated &&
+    !isLoading && (
+      <div className="w-full h-screen">
+        <DashboardNav />
+        <Content />
+      </div>
+    )
   );
-};
+}
 
-export default page;
+export default Page;
