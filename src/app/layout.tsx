@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Linkiffy | An Online Bio Tool",
   description: "Linkiffy is an Online Bio Tool",
+  icons: "./link_1.png",
 };
 
 export default function RootLayout({

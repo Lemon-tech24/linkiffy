@@ -1,38 +1,194 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import { createLink, createUser, getLinkList } from "../lib/action";
+import Image from "next/image";
+import { IoClose } from "react-icons/io5";
+import { toast } from "react-hot-toast";
 
-import { useRouter } from "next/navigation";
-import { createUser } from "../lib/action";
-import DashboardNav from "../components/DashboardNav";
+const FormOverlay = ({ setOpen }: { setOpen: (data: boolean) => void }) => {
+  const [isVisible, setVisible] = useState<boolean>(true);
+  const [pending, setPending] = useState<boolean>(false);
+  const [link, setLink] = useState<string>("");
 
-const Content = () => {
-  return <div className="w-full h-[94%]"></div>;
+  const handleClose = () => {
+    setVisible(false);
+    setTimeout(() => {
+      setOpen(false);
+    }, 500);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPending(true);
+
+    try {
+      const data = await createLink(link);
+      if (data.ok) {
+        toast.success(data.msg);
+      } else {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+      console.error("Error:", error);
+    } finally {
+      setPending(false);
+      setLink("");
+      handleClose();
+    }
+  };
+
+  return (
+    <>
+      <div
+        className={`fixed top-0 left-0 w-full h-screen flex items-center justify-center bg-gray-600/70 ${
+          isVisible ? "fade-in" : "fade-out"
+        }`}
+      >
+        <form
+          className="w-[35%] bg-white p-4 rounded-lg flex flex-col gap-6"
+          onSubmit={handleSubmit}
+        >
+          <div className="w-full flex items-center justify-between">
+            <div className="text-2xl font-semibold">Create Your Linkiffy</div>
+            <IoClose
+              onClick={handleClose}
+              className="text-3xl cursor-pointer"
+            />
+          </div>
+
+          <div className="text-gray-400">Please type Your Preffered Link</div>
+
+          <div className="w-full flex flex-grow items-center shadow-2xl">
+            <div className="bg-gray-300 px-[4px] border border-r-0 text-lg">
+              {typeof window !== "undefined" && window.location.origin + `/`}
+            </div>
+
+            <input
+              type="text"
+              className="border w-full border-l-0 text-lg px-[4px]"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              minLength={3}
+              maxLength={12}
+              required
+            />
+          </div>
+          <div className="text-sm text-gray-400">
+            *More settings will be available after creation*
+          </div>
+
+          <button
+            type="submit"
+            className={`${
+              pending && "cursor-not-allowed"
+            } w-[80%] text-xl bg-gradient-to-r from-[#6981FF] via-[#B86DCB] to-[#FBA4A4] mx-auto rounded-lg p-1 text-white font-bold`}
+            aria-disabled={pending}
+            disabled={pending}
+          >
+            {pending ? "Processing..." : "Create Link"}
+          </button>
+        </form>
+      </div>
+    </>
+  );
+};
+
+const LinkList = () => {
+  const [LinkData, setLinkData] = useState<any>([]);
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const FetchLinks = async () => {
+      try {
+        const { ok, data } = await getLinkList();
+        if (ok) {
+          setLinkData(data);
+        } else {
+          setLinkData([]);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    FetchLinks();
+  }, []);
+
+  if (loading)
+    return (
+      <span className="border-2 border-gray-400 rounded-full border-t-green-600 h-[40px] w-[40px] animate-spin"></span>
+    );
+
+  if (!loading && LinkData.length === 0)
+    return <div className="text-xl text-gray-400">No Links Yet.</div>;
+
+  return (
+    LinkData && (
+      <div className="my-2 w-full">
+        {Array.isArray(LinkData) &&
+          LinkData.map((item: any, key: number) => {
+            return (
+              <div
+                key={key}
+                className="flex items-center p-4 border-t border-gray-300"
+              >
+                <Image
+                  src="/link_1.png"
+                  alt={"globe icon"}
+                  width={20}
+                  height={20}
+                />
+                <span className="ml-4">{item.link}</span>
+              </div>
+            );
+          })}
+      </div>
+    )
+  );
+};
+
+const DashboardContent = () => {
+  const [isOpen, setOpen] = useState<boolean>(false);
+
+  return (
+    <>
+      {isOpen && <FormOverlay setOpen={setOpen} />}
+      <div className="w-full h-[94%] flex items-center flex-col">
+        <div className="w-[40%] h-[80%] flex items-center flex-col">
+          <div className="text-3xl font-semibold w-full flex items-start my-[1em]">
+            Public Pages
+          </div>
+          <button
+            className="text-2xl font-semibold w-full bg-black text-white my-4 p-2 rounded-full"
+            onClick={() => setOpen(true)}
+          >
+            Create Page
+          </button>
+          <LinkList />
+        </div>
+      </div>
+    </>
+  );
 };
 
 function Page() {
-  const { isAuthenticated, isLoading } = useKindeBrowserClient();
-  const router = useRouter();
+  const { isAuthenticated } = useKindeBrowserClient();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/");
-    } else if (isAuthenticated) {
+    if (isAuthenticated) {
       createUser().then((data) => {
         console.log(data?.msg);
       });
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isAuthenticated]);
 
-  return (
-    isAuthenticated &&
-    !isLoading && (
-      <div className="w-full h-screen">
-        <DashboardNav />
-        <Content />
-      </div>
-    )
-  );
+  return isAuthenticated ? <DashboardContent /> : null;
 }
 
 export default Page;

@@ -9,12 +9,8 @@ import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { isAuthenticated } = useKindeBrowserClient();
+  const { isAuthenticated, isLoading } = useKindeBrowserClient();
   const router = useRouter();
-
-  if (isAuthenticated) {
-    router.push("/dashboard");
-  }
 
   return (
     <div className="w-full h-screen">
@@ -30,13 +26,24 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-4">
-              <LoginLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
-                Login
-              </LoginLink>
-              <div className="text-4xl">/</div>
-              <RegisterLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
-                Create Account
-              </RegisterLink>
+              {!isLoading && !isAuthenticated ? (
+                <>
+                  <LoginLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
+                    Login
+                  </LoginLink>
+                  <div className="text-4xl">/</div>
+                  <RegisterLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
+                    Create Account
+                  </RegisterLink>
+                </>
+              ) : (
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700"
+                >
+                  Go to Dashboard
+                </button>
+              )}
             </div>
           </div>
           <div className="w-1/2 h-full flex items-center justify-center">

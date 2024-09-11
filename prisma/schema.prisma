@@ -8,9 +8,26 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
   name      String
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  links     Link[]
+}
+
+model Link {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  link     String  @unique
+  views    Int
+  clicks   Int
+  userId   String  @db.ObjectId
+  user     User    @relation(fields: [userId], references: [id]) // Each link belongs to a user
+  designId String? @db.ObjectId
+  design   Design? @relation(fields: [designId], references: [id]) // Each link can have one design
+}
+
+model Design {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  links Link[]
 }

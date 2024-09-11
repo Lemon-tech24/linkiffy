@@ -1,18 +1,25 @@
+"use client";
 import {
   LogoutLink,
   useKindeBrowserClient,
 } from "@kinde-oss/kinde-auth-nextjs";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const DashboardNav = () => {
-  const { user, isLoading, isAuthenticated } = useKindeBrowserClient();
-
+  const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
+  const router = useRouter();
   return (
-    !isLoading &&
-    isAuthenticated && (
-      <div className="w-full h-[6%] px-4 flex items-center justify-between">
+    isAuthenticated &&
+    !isLoading && (
+      <div className="w-full h-[6%] p-2 flex items-center justify-between">
         <div className="text-3xl">{user?.given_name || user?.email}</div>
-        <div className="text-4xl">Linkiffy</div>
+        <button
+          className="border-none text-4xl font-bold bg-gradient-to-r from-[#F90B0B] via-[#209C94] to-[#69B72B] bg-clip-text text-transparent p-2 text-center"
+          onClick={() => router.push("/")}
+        >
+          Linkiffy
+        </button>
         <LogoutLink className="text-xl border border-black border-solid py-1 px-4 rounded-xl">
           Logout
         </LogoutLink>
