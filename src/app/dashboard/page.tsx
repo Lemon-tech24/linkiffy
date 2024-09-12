@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
@@ -6,8 +7,21 @@ import { createLink, createUser, getLinkList } from "../lib/action";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-const FormOverlay = ({ setOpen }: { setOpen: (data: boolean) => void }) => {
+const FormOverlay = ({
+  setOpen,
+  LinkData,
+  setLinkData,
+  keyword,
+  setKeyword,
+}: {
+  setOpen: (data: boolean) => void;
+  LinkData: any;
+  setLinkData: (data: any) => void;
+  keyword: boolean;
+  setKeyword: (data: boolean) => void;
+}) => {
   const [isVisible, setVisible] = useState<boolean>(true);
   const [pending, setPending] = useState<boolean>(false);
   const [link, setLink] = useState<string>("");
@@ -26,6 +40,7 @@ const FormOverlay = ({ setOpen }: { setOpen: (data: boolean) => void }) => {
     try {
       const data = await createLink(link);
       if (data.ok) {
+        setLinkData([...LinkData, data.data]);
         toast.success(data.msg);
       } else {
         toast.error(data.msg);
@@ -37,6 +52,7 @@ const FormOverlay = ({ setOpen }: { setOpen: (data: boolean) => void }) => {
       setPending(false);
       setLink("");
       handleClose();
+      setKeyword(!keyword);
     }
   };
 
@@ -96,10 +112,9 @@ const FormOverlay = ({ setOpen }: { setOpen: (data: boolean) => void }) => {
   );
 };
 
-const LinkList = () => {
-  const [LinkData, setLinkData] = useState<any>([]);
-
+const LinkList = ({ LinkData, setLinkData, keyword }: any) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   useEffect(() => {
     const FetchLinks = async () => {
@@ -118,7 +133,7 @@ const LinkList = () => {
     };
 
     FetchLinks();
-  }, []);
+  }, [keyword]);
 
   if (loading)
     return (
@@ -130,7 +145,7 @@ const LinkList = () => {
 
   return (
     LinkData && (
-      <div className="my-2 w-full">
+      <div className="my-2 w-full pb-10">
         {Array.isArray(LinkData) &&
           LinkData.map((item: any, key: number) => {
             return (
@@ -144,7 +159,12 @@ const LinkList = () => {
                   width={20}
                   height={20}
                 />
-                <span className="ml-4">{item.link}</span>
+                <span
+                  className="ml-4 cursor-pointer text-base font-semibold"
+                  onClick={() => router.push(`/dashboard/config/${item.id}`)}
+                >
+                  {item.link}
+                </span>
               </div>
             );
           })}
@@ -155,10 +175,20 @@ const LinkList = () => {
 
 const DashboardContent = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [LinkData, setLinkData] = useState<any>([]);
+  const [keyword, setKeyword] = useState<boolean>(false);
 
   return (
     <>
-      {isOpen && <FormOverlay setOpen={setOpen} />}
+      {isOpen && (
+        <FormOverlay
+          setOpen={setOpen}
+          setLinkData={setLinkData}
+          LinkData={LinkData}
+          keyword={keyword}
+          setKeyword={setKeyword}
+        />
+      )}
       <div className="w-full h-[94%] flex items-center flex-col">
         <div className="w-[40%] h-[80%] flex items-center flex-col">
           <div className="text-3xl font-semibold w-full flex items-start my-[1em]">
@@ -170,7 +200,11 @@ const DashboardContent = () => {
           >
             Create Page
           </button>
-          <LinkList />
+          <LinkList
+            LinkData={LinkData}
+            setLinkData={setLinkData}
+            keyword={keyword}
+          />
         </div>
       </div>
     </>

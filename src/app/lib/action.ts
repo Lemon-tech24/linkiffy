@@ -35,51 +35,6 @@ export async function createUser() {
   }
 }
 
-export async function createLink(link: string) {
-  const { getUser, isAuthenticated } = getKindeServerSession();
-  const isAllowed = await isAuthenticated();
-
-  const userdata = await getUser();
-
-  try {
-    if (isAllowed) {
-      const user = await prisma.user.findUnique({
-        where: {
-          email: userdata.email as string,
-        },
-      });
-
-      if (user) {
-        if (link && link.length >= 3) {
-          const create = await prisma.link.create({
-            data: {
-              userId: user.id,
-              link: link,
-              views: 0,
-              clicks: 0,
-            },
-          });
-
-          if (create) {
-            revalidatePath("/dashboard");
-            return { ok: true, msg: "Link Created!" };
-          } else {
-            return { ok: false, msg: "Failed to Create Link" };
-          }
-        } else {
-          return { ok: false, msg: "Minimum Length: 3" };
-        }
-      } else {
-        return { ok: false, msg: "User Not Found" };
-      }
-    } else {
-      return { ok: false, msg: "Unauthorized!" };
-    }
-  } catch (error) {
-    throw new Error("Error Occurred");
-  }
-}
-
 export async function getLinkList() {
   const { getUser, isAuthenticated } = getKindeServerSession();
   const isAllowed = await isAuthenticated();
@@ -105,5 +60,104 @@ export async function getLinkList() {
     }
   } catch (error) {
     throw new Error("Error Occurred");
+  }
+}
+
+// OPERATIONS
+export async function createLink(link: string) {
+  const { getUser, isAuthenticated } = getKindeServerSession();
+  const isAllowed = await isAuthenticated();
+
+  const userData = await getUser();
+
+  try {
+    if (isAllowed) {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: userData.email as string,
+        },
+      });
+
+      if (user) {
+        if (link && link.length >= 3) {
+          const linkCount = await prisma.link.count({
+            where: {
+              userId: user.id,
+            },
+          });
+
+          if (linkCount < 5) {
+            const existingLink = await prisma.link.findUnique({
+              where: {
+                link: link,
+              },
+            });
+
+            if (!existingLink) {
+              const create = await prisma.link.create({
+                data: {
+                  userId: user.id,
+                  link: link,
+                  views: 0,
+                  clicks: 0,
+                },
+              });
+
+              if (create) {
+                revalidatePath("/dashboard");
+                return {
+                  ok: true,
+                  msg: "Link Created!",
+                  data: create,
+                };
+              } else {
+                return { ok: false, msg: "Failed to Create Link" };
+              }
+            } else {
+              return { ok: false, msg: "Link Already Exist!" };
+            }
+          } else {
+            return { ok: false, msg: "Maximum Link: 10" };
+          }
+        } else {
+          return { ok: false, msg: "Minimum Length: 3" };
+        }
+      } else {
+        return { ok: false, msg: "User Not Found" };
+      }
+    } else {
+      return { ok: false, msg: "Unauthorized!" };
+    }
+  } catch (error) {
+    throw new Error("Error Occurred");
+  }
+}
+
+export async function deleteLink(id: string) {
+  const { getUser, isAuthenticated } = getKindeServerSession();
+  const isAllowed = await isAuthenticated();
+  const userData = await getUser();
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: userData.email as string,
+    },
+  });
+
+  if (isAllowed && user) {
+    const deleted = await prisma.link.delete({
+      where: {
+        id: id,
+        userId: user.id,
+      },
+    });
+
+    if (deleted) {
+      return { ok: true, msg: "Successfully Deleted!" };
+    } else {
+      return { ok: false, msg: "Failed To Delete Link" };
+    }
+  } else {
+    return { ok: false, msg: "Unauthorized!" };
   }
 }
