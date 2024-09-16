@@ -26,7 +26,8 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-4">
-              {!isLoading && !isAuthenticated ? (
+              {isLoading && null}
+              {!isAuthenticated ? (
                 <>
                   <LoginLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
                     Login

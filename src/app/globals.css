@@ -11,6 +11,13 @@
     "Lucida Sans", Arial, sans-serif;
 }
 
+* {
+  @apply transition-colors;
+}
+
+body {
+  background-color: #f7f7f7;
+}
 .fade-in {
   opacity: 0;
   animation: fadeIn 0.5s forwards;

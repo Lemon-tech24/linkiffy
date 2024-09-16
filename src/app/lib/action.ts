@@ -117,7 +117,7 @@ export async function createLink(link: string) {
               return { ok: false, msg: "Link Already Exist!" };
             }
           } else {
-            return { ok: false, msg: "Maximum Link: 10" };
+            return { ok: false, msg: "Maximum Link: 5" };
           }
         } else {
           return { ok: false, msg: "Minimum Length: 3" };
@@ -151,7 +151,6 @@ export async function deleteLink(id: string) {
         userId: user.id,
       },
     });
-
     if (deleted) {
       return { ok: true, msg: "Successfully Deleted!" };
     } else {

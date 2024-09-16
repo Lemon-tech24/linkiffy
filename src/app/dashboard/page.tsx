@@ -3,11 +3,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { createLink, createUser, getLinkList } from "../lib/action";
+import { createLink, createUser, deleteLink, getLinkList } from "../lib/action";
 import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { LuMousePointer2 } from "react-icons/lu";
+import { ImStatsBars } from "react-icons/im";
 
 const FormOverlay = ({
   setOpen,
@@ -112,9 +114,37 @@ const FormOverlay = ({
   );
 };
 
-const LinkList = ({ LinkData, setLinkData, keyword }: any) => {
+const LinkList = ({
+  LinkData,
+  setLinkData,
+  keyword,
+}: {
+  LinkData: Array<any>;
+  setLinkData: (data: any) => void;
+  keyword: boolean;
+}) => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [isDisable, setDisabled] = useState<boolean>(false);
   const router = useRouter();
+
+  const handleDelete = async (id: string, index: number) => {
+    if (!isDisable)
+      try {
+        setDisabled(true);
+        const { ok, msg } = await deleteLink(id);
+
+        if (ok) {
+          toast.success(msg);
+          LinkData.splice(index, 1);
+        } else {
+          toast.error(msg);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setDisabled(false);
+      }
+  };
 
   useEffect(() => {
     const FetchLinks = async () => {
@@ -151,20 +181,51 @@ const LinkList = ({ LinkData, setLinkData, keyword }: any) => {
             return (
               <div
                 key={key}
-                className="flex items-center p-4 border-t border-gray-300"
+                className="flex items-center justify-between p-4 border-t border-gray-300"
               >
-                <Image
-                  src="/link_1.png"
-                  alt={"globe icon"}
-                  width={20}
-                  height={20}
-                />
-                <span
-                  className="ml-4 cursor-pointer text-base font-semibold"
-                  onClick={() => router.push(`/dashboard/config/${item.id}`)}
+                <div className="flex items-center">
+                  <Image
+                    src="/link_1.png"
+                    alt={"globe icon"}
+                    width={20}
+                    height={20}
+                  />
+                  <span
+                    className="ml-4 cursor-pointer text-base font-semibold"
+                    onClick={() => router.push(`/dashboard/${item.id}`)}
+                  >
+                    {item.link}
+                  </span>
+                </div>
+
+                <div
+                  className="flex items-center gap-1 text-[18px] tooltip tooltip-bottom"
+                  data-tip="Views"
                 >
-                  {item.link}
-                </span>
+                  <ImStatsBars className="text-2xl" />
+                  {item.views}
+                </div>
+
+                <div
+                  className="flex items-center gap-1 text-[18px] tooltip tooltip-bottom"
+                  data-tip="Click"
+                >
+                  <LuMousePointer2 className="text-2xl" />
+                  {item.clicks}
+                </div>
+
+                <button
+                  onClick={() =>
+                    handleDelete(item.id, LinkData.indexOf(item) as number)
+                  }
+                  disabled={isDisable || loading}
+                  aria-disabled={isDisable || loading}
+                  className={`${
+                    (isDisable || loading) && "cursor-not-allowed"
+                  }`}
+                >
+                  delete
+                </button>
               </div>
             );
           })}
@@ -212,17 +273,24 @@ const DashboardContent = () => {
 };
 
 function Page() {
-  const { isAuthenticated } = useKindeBrowserClient();
+  const { isAuthenticated, isLoading } = useKindeBrowserClient();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoading) {
       createUser().then((data) => {
         console.log(data?.msg);
       });
     }
-  }, [isAuthenticated]);
+  }, []);
 
-  return isAuthenticated ? <DashboardContent /> : null;
+  return (
+    !isLoading &&
+    isAuthenticated && (
+      <>
+        <DashboardContent />
+      </>
+    )
+  );
 }
 
 export default Page;

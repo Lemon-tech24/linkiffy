@@ -6,8 +6,8 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-    theme: {
-      screens: {
+  theme: {
+    screens: {
       "2xl": { max: "1535px" },
       // => @media (max-width: 1535px) { ... }
 
@@ -29,9 +29,7 @@ const config: Config = {
     },
 
     extend: {
-    
-
-       keyframes: {
+      keyframes: {
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
@@ -46,11 +44,12 @@ const config: Config = {
         fadeIn: `fadeIn .5s linear`,
         fadeOut: "fadeOut .5s linear",
       },
-
     },
   },
 
-  
-  plugins: [],
+  plugins: [require("daisyui")],
+  daisyui: {
+    themes: ["light"],
+  },
 };
 export default config;
