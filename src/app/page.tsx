@@ -26,8 +26,16 @@ export default function Home() {
             </p>
 
             <div className="flex items-center justify-center gap-4">
-              {isLoading && null}
-              {!isAuthenticated ? (
+              {isLoading ? (
+                <div className="text-lg">loading...</div>
+              ) : isAuthenticated ? (
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700"
+                >
+                  Go to Dashboard
+                </button>
+              ) : (
                 <>
                   <LoginLink className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700">
                     Login
@@ -37,13 +45,6 @@ export default function Home() {
                     Create Account
                   </RegisterLink>
                 </>
-              ) : (
-                <button
-                  onClick={() => router.push("/dashboard")}
-                  className="text-2xl border border-solid border-black rounded-md px-4 py-1 hover:scale-105 duration-700"
-                >
-                  Go to Dashboard
-                </button>
               )}
             </div>
           </div>

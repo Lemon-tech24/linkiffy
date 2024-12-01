@@ -28,6 +28,16 @@ body {
   animation: fadeOut 0.5s forwards;
 }
 
+.fade-in-in {
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+.fade-out-out {
+  opacity: 1;
+  animation: fadeOut 0.5s forwards;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

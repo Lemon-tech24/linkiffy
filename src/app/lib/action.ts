@@ -63,6 +63,30 @@ export async function getLinkList() {
   }
 }
 
+export async function getUrlList(id: string) {
+  const { getUser, isAuthenticated } = getKindeServerSession();
+  const isAllowed = await isAuthenticated();
+  const user = await getUser();
+
+  try {
+    if (isAllowed && user) {
+      const userURLs = prisma.link.findMany({
+        where: {
+          id: id,
+        },
+
+        include: {},
+      });
+
+      //not done yet
+    } else {
+      return { ok: false, msg: "Unauthorized!" };
+    }
+  } catch (error) {
+    throw new Error("Error Occurred");
+  }
+}
+
 // OPERATIONS
 export async function createLink(link: string) {
   const { getUser, isAuthenticated } = getKindeServerSession();

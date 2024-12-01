@@ -25,9 +25,17 @@ model Link {
   user     User    @relation(fields: [userId], references: [id]) // Each link belongs to a user
   designId String? @db.ObjectId
   design   Design? @relation(fields: [designId], references: [id]) // Each link can have one design
+  urls     Url[]
 }
 
 model Design {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
   links Link[]
+}
+
+model Url {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  type   String
+  Link   Link?   @relation(fields: [linkId], references: [id])
+  linkId String? @db.ObjectId
 }
