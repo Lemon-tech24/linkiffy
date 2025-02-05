@@ -1,5 +1,5 @@
 import { Toaster } from "react-hot-toast";
-import DashboardNav from "../components/DashboardNav";
+import DashboardNav from "@/app/dashboard/DashboardNav";
 
 export default function Layout({
   children,
