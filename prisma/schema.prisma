@@ -13,29 +13,45 @@ model User {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  links     Link[]
+  links     Link[]   @relation // If a user is deleted, their links are also deleted
 }
 
 model Link {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  link     String  @unique
-  views    Int
-  clicks   Int
-  userId   String  @db.ObjectId
-  user     User    @relation(fields: [userId], references: [id]) // Each link belongs to a user
-  designId String? @db.ObjectId
-  design   Design? @relation(fields: [designId], references: [id]) // Each link can have one design
-  urls     Url[]
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  link      String   @unique
+  views     Int
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // If a user is deleted, their links are deleted
+  designId  String?  @db.ObjectId
+  design    Design?  @relation(fields: [designId], references: [id], onDelete: Cascade) // If a design is deleted, remove its reference from links
+  urls      Url[]    @relation
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Design {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  links Link[]
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  linkId         String? @db.ObjectId
+  links          Link[]  @relation
+  image          String?
+  title          String
+  titleColor     String
+  bio            String
+  colorType      String
+  monoColor      String?
+  colorOne       String?
+  colorTwo       String?
+  colorDirection String?
 }
 
 model Url {
-  id     String  @id @default(auto()) @map("_id") @db.ObjectId
-  type   String
-  Link   Link?   @relation(fields: [linkId], references: [id])
-  linkId String? @db.ObjectId
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  linkId      String? @db.ObjectId
+  Link        Link?   @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  name        String
+  url         String
+  description String
+  displayIcon Boolean
+  disabled    Boolean
+  views       Int     @default(0)
 }

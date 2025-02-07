@@ -41,8 +41,8 @@ const config: Config = {
       },
 
       animation: {
-        fadeIn: `fadeIn .5s linear`,
-        fadeOut: "fadeOut .5s linear",
+        fadeIn: `fadeIn .3s linear`,
+        fadeOut: "fadeOut .3s linear",
       },
     },
   },
