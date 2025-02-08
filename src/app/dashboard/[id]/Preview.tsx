@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import PreviewItem from "@/app/components/PreviewItem";
-import UrlItem from "@/app/components/UrlItem";
-import { getUrlList } from "@/app/lib/action";
 import { DesignTypes } from "@/app/lib/interfaces";
 import Image from "next/image";
-import React, { SetStateAction, useEffect, useState, ReactNode } from "react";
+import React from "react";
 import {
   FaGithub,
   FaInstagram,
@@ -40,7 +39,7 @@ function Preview({
         background:
           designData.colorType === "solid"
             ? designData.monoColor
-            : `linear-gradient(${designData.colorDirection}, ${designData.gradientColor1}, ${designData.gradientColor2})`,
+            : `linear-gradient(${designData.colorDirection}, ${designData.colorOne}, ${designData.colorTwo})`,
       }}
     >
       {designData.image && (
@@ -69,7 +68,11 @@ function Preview({
       {urlData && urlData.length > 0
         ? urlData.map((urlItem: any, index: number) => (
             <div key={index} className="w-[70%]">
-              <PreviewItem data={urlItem} icon={getIconForUrl(urlItem.url)} />
+              <PreviewItem
+                data={urlItem}
+                icon={getIconForUrl(urlItem.url)}
+                isPreview={true}
+              />
             </div>
           ))
         : null}

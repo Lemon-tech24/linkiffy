@@ -73,7 +73,9 @@ function CreateLink({
             required
           />
           <div>{inputLink.length}/20</div>
-
+          <div className="text-xs">
+            <strong>Note:</strong> more features will be available upon creation
+          </div>
           <button
             type="submit"
             className="w-full bg-black text-white text-xl rounded-xl p-2"

@@ -12,25 +12,14 @@ const DesignTab = ({
   data,
   setData,
   id,
-  initialData,
 }: {
   data: DesignTypes;
   setData: React.Dispatch<React.SetStateAction<DesignTypes>>;
   id: string;
-  initialData: DesignTypes;
 }) => {
   const [isDisabled, setDisabled] = useState<boolean>(false);
 
   const ref = useRef<HTMLInputElement>(null);
-
-  const initialColors = {
-    first: "#000000",
-    second: "#ffffff",
-  };
-
-  const isColorsDefault =
-    data.gradientColor1 === initialColors.first &&
-    data.gradientColor2 === initialColors.second;
 
   const handleUpdate = () => {
     if (isDisabled) return;
@@ -50,8 +39,6 @@ const DesignTab = ({
       )
       .finally(() => setDisabled(false));
   };
-
-  const isDataChanged = JSON.stringify(data) !== JSON.stringify(initialData);
 
   const convertImage = (file: File): Promise<string | ArrayBuffer | null> => {
     return new Promise((resolve, reject) => {
@@ -105,7 +92,7 @@ const DesignTab = ({
       {/* Link Image Section */}
       <div className="w-full flex items-center flex-col">
         <div className="w-full text-left text-lg font-semibold">Link Image</div>
-        {data && data.image ? (
+        {data.image ? (
           <div className="flex items-center justify-center">
             <Image src={data.image} alt="Image" width={100} height={100} />
             <MdDelete
@@ -202,7 +189,7 @@ const DesignTab = ({
           style={{
             background: `${
               data.colorType === "gradient"
-                ? `linear-gradient(${data.colorDirection}, ${data.gradientColor1}, ${data.gradientColor2})`
+                ? `linear-gradient(${data.colorDirection}, ${data.colorOne}, ${data.colorTwo})`
                 : data.monoColor
             }`,
           }}
@@ -252,37 +239,21 @@ const DesignTab = ({
                   <div className="text-lg">Colors</div>
                   <input
                     type="color"
-                    value={data.gradientColor1}
+                    value={data.colorOne}
                     onChange={(e) =>
-                      setData({ ...data, gradientColor1: e.target.value })
+                      setData({ ...data, colorOne: e.target.value })
                     }
                     className="border border-black border-solid rounded-md"
                   />
                   <input
                     type="color"
-                    value={data.gradientColor2}
+                    value={data.colorTwo}
                     onChange={(e) =>
-                      setData({ ...data, gradientColor2: e.target.value })
+                      setData({ ...data, colorTwo: e.target.value })
                     }
                     className="border border-black border-solid rounded-md"
                   />
                 </div>
-
-                {!isColorsDefault && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setData({
-                        ...data,
-                        gradientColor1: initialColors.first,
-                        gradientColor2: initialColors.second,
-                      })
-                    }
-                    className="text-lg"
-                  >
-                    Reset
-                  </button>
-                )}
               </div>
             </>
           )}
@@ -291,9 +262,9 @@ const DesignTab = ({
 
       <button
         onClick={handleUpdate}
-        disabled={isDisabled || !isDataChanged}
+        disabled={isDisabled}
         className={`w-[70%] border border-solid shadow-2xl text-xl font-semibold rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 text-white ${
-          isDisabled || !isDataChanged ? "opacity-50 cursor-not-allowed" : ""
+          isDisabled ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
         Update

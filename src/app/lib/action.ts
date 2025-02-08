@@ -1,9 +1,54 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { DesignTypes, UrlTypes } from "./interfaces";
+
+export async function getLinkDetails(link: string) {
+  try {
+    const details = await prisma.link.findUnique({
+      where: {
+        link: link,
+      },
+
+      include: {
+        design: true,
+        urls: true,
+      },
+    });
+
+    if (!details) return { ok: false, msg: "Failed to Retrieve Link Data" };
+
+    return { ok: true, data: details };
+  } catch (err) {
+    return { ok: false, msg: "Error Occurred" };
+  }
+}
+
+export async function getDesignData(id: string) {
+  try {
+    const { getUser, isAuthenticated } = getKindeServerSession();
+    if (!(await isAuthenticated())) return { ok: false, msg: "Unauthorized!" };
+
+    const user = await getUser();
+    if (!user) return { ok: false, msg: "User not found" };
+    const designData = await prisma.design.findUnique({
+      where: {
+        linkId: id,
+      },
+    });
+
+    if (!designData)
+      return { ok: false, msg: "Failed to Retrieve Design Data" };
+
+    return { ok: true, data: designData };
+  } catch (err) {
+    console.error(err);
+    return { ok: false, msg: "Error Occurred" };
+  }
+}
 
 export async function getLinkList() {
   try {
@@ -64,7 +109,7 @@ export async function getUrlList(id: string) {
         },
 
         include: {
-          Link: true,
+          link: true,
         },
       });
 
@@ -194,11 +239,32 @@ export async function createLink(link: string) {
     const existingLink = await prisma.link.findUnique({ where: { link } });
     if (existingLink) return { ok: false, msg: "Link Already Exists!" };
 
+    const initialData = {
+      image: "",
+      title: "Untitled",
+      titleColor: "#000000",
+      bio: "Empty",
+      colorType: "solid",
+      colorOne: "#000000",
+      colorTwo: "#ffffff",
+      colorDirection: "to right",
+      monoColor: "#ffffff",
+    };
+
     const newLink = await prisma.link.create({
-      data: { userId: user.id, link, views: 0 },
+      data: {
+        userId: user.id,
+        link,
+        views: 0,
+        design: {
+          create: {
+            ...initialData,
+          },
+        },
+      },
     });
 
-    if (!newLink) return { ok: false, msg: "Failed to Create Link" };
+    if (!newLink) return { ok: false, msg: "Failed to setup the link" };
 
     revalidatePath("/dashboard");
     return { ok: true, msg: "Link Created!", data: newLink };
@@ -309,21 +375,62 @@ export async function UpdateDesign(data: DesignTypes, id: string) {
 
   if (!isAllowed || !user) return { ok: false, msg: "Unauthorized" };
 
-  const createDesign = await prisma.design.create({
+  const createDesign = await prisma.design.update({
+    where: { linkId: id },
     data: {
-      linkId: id,
+      image: data.image,
       title: data.title,
       titleColor: data.titleColor,
       bio: data.bio,
       colorType: data.colorType,
-      monoColor: data.monoColor,
-      colorOne: data.gradientColor1,
-      colorTwo: data.gradientColor2,
+      colorOne: data.colorOne,
+      colorTwo: data.colorTwo,
       colorDirection: data.colorDirection,
+      monoColor: data.monoColor,
     },
   });
 
   if (!createDesign) return { ok: false, msg: "Failed to Update the design" };
 
-  return { ok: true, msg: "Design Updated Successfully" };
+  return { ok: true, msg: "Design Updated Successfully", data: createDesign };
+}
+
+export async function AddViewsUrl(id: string) {
+  try {
+    const addView = await prisma.url.update({
+      where: {
+        id: id,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+
+    if (!addView) return { ok: false, msg: "Failed To Add View URl" };
+    return { ok: true, msg: "Successfully added views in Url" };
+  } catch (err) {
+    return { ok: false, msg: "Error Occurred While Viewing Url" };
+  }
+}
+
+export async function AddViewsLink(link: string) {
+  try {
+    const addView = await prisma.link.update({
+      where: {
+        link: link,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+
+    if (!addView) return { ok: false, msg: "Failed To Add View Link" };
+    return { ok: true, msg: "Successfully added views in link" };
+  } catch (err) {
+    return { ok: false, msg: "Error Occurred While Viewing Link" };
+  }
 }

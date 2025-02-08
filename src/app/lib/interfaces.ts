@@ -5,8 +5,8 @@ export interface DesignTypes {
   bio: string;
   colorType: "solid" | "gradient" | string;
   monoColor?: string;
-  gradientColor1?: string;
-  gradientColor2?: string;
+  colorOne?: string;
+  colorTwo?: string;
   colorDirection?:
     | "to top"
     | "to top right"
@@ -26,4 +26,14 @@ export interface UrlTypes {
   displayIcon: boolean;
   disabled: boolean;
   views: number;
+}
+
+export interface DataType {
+  id: string;
+  link: string;
+  views: number;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  design: DesignTypes;
 }

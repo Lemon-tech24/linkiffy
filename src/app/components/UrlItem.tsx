@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FiEdit } from "react-icons/fi";
 import { ImStatsBars } from "react-icons/im";
 import { LuSettings2 } from "react-icons/lu";
