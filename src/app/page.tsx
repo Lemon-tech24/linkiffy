@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import {
   LoginLink,
@@ -15,7 +16,7 @@ export default function Home() {
     <div className="w-full h-screen">
       <Navigation />
       <div className="w-full h-[94%] flex animate-fadeIn">
-        <div className="w-full h-full flex flex-col justify-center items-center gap-10">
+        <div className="w-[50%] h-full flex flex-col justify-center items-center gap-10">
           <div className="text-[48px] font-bold bg-gradient-to-r from-[#F90B0B] via-[#209C94] to-[#69B72B] bg-clip-text text-transparent">
             Link it All Together
           </div>
@@ -45,6 +46,14 @@ export default function Home() {
               </>
             )}
           </div>
+        </div>
+
+        <div className="w-[50%] h-full flex justify-center items-center">
+          <img
+            src="/s2.png"
+            className="object-contain w-full h-full"
+            alt="image"
+          />
         </div>
       </div>
     </div>
