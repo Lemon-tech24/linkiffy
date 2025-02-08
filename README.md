@@ -6,3 +6,10 @@ Linkiffy is a dynamic platform designed for individuals, influencers, vloggers, 
 - **User Authentication** – Secure login with email-based authentication by Kinde
 - **Custom Domains** – Use personal domains for branded link pages.
 - **SEO Optimization** – Improve discoverability with meta tags and structured data.
+
+
+![Image](https://github.com/carlhari/linkiffy/blob/master/public/s1.png?raw=true)
+<hr>
+![Image](https://github.com/carlhari/linkiffy/blob/master/public/s2.png?raw=true)
+<hr>
+![Image](https://github.com/carlhari/linkiffy/blob/master/public/s3.png?raw=true)
